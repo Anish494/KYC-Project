@@ -1,0 +1,17 @@
+
+KYC Decision Aggregator
+------------------------
+Weights:
+  OCR matching     25%
+  Face matching    25%
+  Liveness         20%
+  Stamp            15%
+  Tampering        15%
+
+Threshold: weighted_score >= 0.6 -> APPROVED
+
+Hard reject rules (override score):
+  - Liveness failed  -> REJECTED
+  - Tampering found  -> REJECTED
+
+Status values: APPROVED / REJECTED

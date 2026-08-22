@@ -1,0 +1,16 @@
+
+Face Matching Module
+---------------------
+Model: InsightFace buffalo_l
+Embedding size: 512
+Threshold: 0.4 (configurable)
+Confidence levels:
+  high   >= 0.6
+  medium >= 0.4
+  low     < 0.4
+
+Functions:
+  get_face_embedding(image, upscale=3) -> (embedding, status)
+  cosine_similarity(emb1, emb2)        -> float
+  match_faces(image1, image2)          -> dict
+  verify_face(citizenship_path, selfie_path) -> dict

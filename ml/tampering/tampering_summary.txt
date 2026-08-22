@@ -1,0 +1,25 @@
+
+Tampering Detection Module
+---------------------------
+Method: Error Level Analysis (ELA)
+Threshold: 0.4 (genuine_score >= 0.4 = genuine)
+
+How it works:
+  1. Resave image as JPEG at quality=90
+  2. Find pixel difference between original and resaved
+  3. Amplify differences
+  4. Analyze brightness metrics of ELA image
+
+Metrics used:
+  ela_mean    (weight 0.3) — overall brightness
+  ela_std     (weight 0.3) — variance in brightness
+  bright_ratio(weight 0.2) — % of very bright pixels
+  ela_max     (weight 0.2) — maximum brightness
+
+Score interpretation:
+  genuine_score > 0.4 → Genuine document
+  genuine_score < 0.4 → Possibly tampered
+
+Functions:
+  generate_ela(image_path, quality=90)  -> PIL Image
+  analyze_ela(image_path)               -> dict

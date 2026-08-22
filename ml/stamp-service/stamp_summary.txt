@@ -1,0 +1,16 @@
+
+Stamp Verification Module
+--------------------------
+Methods: ORB keypoint matching + SSIM structural similarity
+Classes: emblem (class 1), logo (class 4)
+Threshold: 0.4 (configurable)
+
+References:
+  ml/stamp-service/references/reference_emblem.jpg
+  ml/stamp-service/references/reference_logo.jpg
+
+Functions:
+  orb_similarity(img1, img2)         -> float
+  ssim_similarity(img1, img2)        -> float
+  compare_stamps(crop, ref_path)     -> dict
+  verify_stamp(citizenship_path)     -> dict
