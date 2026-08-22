@@ -1,0 +1,5 @@
+train: train/images
+val: valid/images
+
+nc: 8
+names: ['c_no', 'emblem', 'fname', 'gender', 'logo', 'mname', 'name', 'photo']

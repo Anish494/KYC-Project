@@ -1,0 +1,29 @@
+# Virtual environment
+myenv/
+
+# Jupyter checkpoints
+.ipynb_checkpoints/
+
+# Dataset (too large for GitHub)
+train/
+train_original/
+valid/
+genuine/
+
+# YOLO cache
+*.cache
+
+# Model weights (large files)
+*.pt
+*.onnx
+
+# Python cache
+__pycache__/
+*.pyc
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Cropped outputs
+cropped_fields/
