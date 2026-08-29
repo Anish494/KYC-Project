@@ -1,8 +1,7 @@
-# E-KYC — Automated KYC Verification for Nepali Citizenship Documents
+# Automated KYC Verification for Nepali Citizenship Documents
 
 A multi-module automated Know Your Customer (KYC) verification system built for Nepali citizenship documents. The system uses computer vision and deep learning to verify document authenticity, match faces, detect liveness, and extract text — replacing manual document checking with an automated pipeline.
 
-> Built as a minor project for academic and demonstration purposes.
 
 ---
 
