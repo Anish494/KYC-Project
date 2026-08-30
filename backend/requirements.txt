@@ -1,0 +1,15 @@
+ 
+fastapi
+uvicorn
+python-multipart
+ultralytics
+easyocr
+insightface
+onnxruntime-gpu
+opencv-python
+pillow
+numpy
+torch
+torchvision
+python-Levenshtein
+scikit-image
