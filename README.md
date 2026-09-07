@@ -29,7 +29,7 @@ This project was built independently, taking inspiration from a similar project 
 - **Document Field Detection** — YOLOv8 trained on Nepali citizenship images detects and crops `name`, `fname`, `mname`, `photo`, `c_no`, `emblem`, `logo`, `gender` fields
 - **OCR Matching** — EasyOCR extracts Nepali text from cropped fields and compares with user-entered details using Levenshtein similarity
 - **Face Matching** — InsightFace `buffalo_l` extracts 512-dim embeddings from citizenship photo and selfie, compared using cosine similarity
-- **Passive Liveness Detection** — Ensemble of two MiniFASNet models detects spoof attempts without requiring user interaction
+- **Active Liveness Detection** — MediaPipe tracks real-time face position via webcam; auto-captures the selfie when head movement is detected (no capture button). Movement bonus is combined with a MiniFASNet ensemble score for the final liveness score
 - **Stamp Verification** — ORB keypoint matching + SSIM structural similarity compares detected `emblem` and `logo` against reference stamps
 - **Tampering Detection** — Error Level Analysis (ELA) detects digitally edited regions in the citizenship image
 - **KYC Aggregator** — Weighted scoring across all modules with hard reject rules gives final APPROVED/REJECTED verdict
@@ -53,9 +53,10 @@ Citizenship Image + Selfie + Form Data
    matching  similarity   matching
         │     │              │
         ▼     ▼              ▼
-    Liveness           Tampering
-    MiniFASNet          ELA Analysis
-    (2 models avg)     (error level)
+    Liveness              Tampering
+  Mediapipe capture      ELA Analysis
+    + MiniFASNet         (error level)
+  (movement + model)     
               │
               ▼
         Aggregator
@@ -76,6 +77,7 @@ Citizenship Image + Selfie + Form Data
 - React + Vite
 - Tailwind CSS
 - Axios
+- MediaPipe (`@mediapipe/face_detection`, `@mediapipe/camera_utils`)
 
 ### Backend
 - FastAPI
@@ -177,9 +179,10 @@ KYC-Project/
 
 ### 4. Liveness Detection (`services/liveness.py`)
 - Models: `MiniFASNetV2` + `MiniFASNetV1SE` averaged
-- Passive detection — single image, no user action needed
+- Active detection — MediaPipe tracks face position in the browser; selfie auto-captures once nose displacement exceeds 30px, no manual capture button
+- Final score = model_score * 0.1 + movement_bonus * 0.9
 - Detects: printed photos, phone screen replays, spoofed submissions
-- Threshold: averaged score ≥ 0.6
+- Threshold: final score ≥ 0.3
 
 ### 5. Stamp Verification (`services/stamp.py`)
 - ORB: finds and matches keypoints between detected stamp and reference
@@ -203,7 +206,6 @@ weighted_score = ocr_score   * 0.25
                + tamper_score * 0.15
 
 Hard reject rules (override weighted score):
-  - liveness is_live = False       → REJECTED (spoof attempt)
   - tampering is_genuine = False   → REJECTED (forged document)
 
 Final decision:
@@ -343,8 +345,7 @@ Health check — returns `{"status": "ok"}`
       }
     },
     "face":      { "match": true,  "score": 0.82, "confidence": "high"  },
-    "liveness":  { "is_live": true, "score": 0.75, "label": "real"      },
-    "stamp":     { "is_genuine": true, "avg_score": 0.65                 },
+    "liveness":  { "is_live": true, "score": 0.75, "movement_bonus": 0.7, "label": "real" },    "stamp":     { "is_genuine": true, "avg_score": 0.65                 },
     "tampering": { "is_genuine": true, "genuine_score": 0.79             }
   }
 }
