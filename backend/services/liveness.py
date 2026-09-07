@@ -21,23 +21,24 @@ def predict_liveness(model, face_img):
 
     return real_score
 
-
-def check_liveness(selfie_path, threshold=0.6):
-    """
-    Full liveness check.
-    Averages predictions from both models.
-    """
+def check_liveness(selfie_path, threshold=0.3, movement_bonus=0.0):
     img = Image.open(selfie_path).convert("RGB")
 
     score1 = predict_liveness(liveness_model1, img)
     score2 = predict_liveness(liveness_model2, img)
+    model_score = (score1 + score2) / 2
 
-    final_score = (score1 + score2) / 2
+    # Combine: model has 30% weight, movement has 70% weight
+    if movement_bonus > 0:
+        final_score = model_score * 0.1 + movement_bonus * 0.9
+    else:
+        final_score = model_score
+
+    print(f"Liveness — model: {model_score:.3f}  bonus: {movement_bonus}  final: {final_score:.3f}")
 
     return {
-        "is_live":      final_score >= threshold,
-        "score":        round(final_score, 4),
-        "score_model1": round(score1, 4),
-        "score_model2": round(score2, 4),
-        "label":        "real" if final_score >= threshold else "spoof"
+        "is_live":         final_score >= threshold,
+        "score":           round(final_score, 4),
+        "movement_bonus":  movement_bonus,
+        "label":           "real" if final_score >= threshold else "spoof"
     }

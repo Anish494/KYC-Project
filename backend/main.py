@@ -70,6 +70,8 @@ async def verify_kyc(
     name:              str = Form(...),
     c_no:              str = Form(...),
     gender:            str = Form(...),
+    movement_bonus:    float = Form(default=0.0),  
+
 ):
     session_id   = str(uuid.uuid4())[:8]
     temp_session = os.path.join(TEMP_DIR, session_id)
@@ -103,7 +105,7 @@ async def verify_kyc(
                 "reason": "photo not detected", "confidence": "low"
             }
 
-        liveness_result  = check_liveness(selfie_path)
+        liveness_result  = check_liveness(selfie_path, movement_bonus=movement_bonus)
         stamp_result     = verify_stamp(detections)
         tampering_result = analyze_ela(front_path)
 
